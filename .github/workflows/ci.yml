@@ -1,0 +1,41 @@
+name: Java CI using Maven
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Test Project  # Clear job name for better reporting
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner for GitHub Actions
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3  # Check out the code from the repository
+
+      # Step 2: Set up JDK (Java Development Kit)
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'  # Using the Adoptium (Temurin) JDK
+          java-version: '17'  # Java 17 is used for the project
+
+      # Step 3: Install Maven (Java build tool)
+      - name: Install Maven
+        run: |
+          sudo apt-get update  # Update package list
+          sudo apt-get install -y maven  # Install Maven package
+
+      # Step 4: Install Xvfb for virtual display and set the DISPLAY environment variable
+      - name: Install Xvfb and set DISPLAY variable
+        run: |
+          sudo apt-get install -y xvfb  # Install Xvfb package
+          export DISPLAY=:99  # Set the DISPLAY environment variable to virtual display 99
+          Xvfb :99 -screen 0 1024x768x24 &  # Start Xvfb with screen 0 and resolution 1024x768, 24-bit color depth
+          echo "DISPLAY=:99" >> $GITHUB_ENV  # Export DISPLAY globally to the environment variable
+
+      # Step 5: Run Maven Build and Tests
+      - name: Run Maven Build and Tests
+        run: mvn clean test  # Run the Maven command to build the project and execute the tests
