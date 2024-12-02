@@ -52,4 +52,24 @@ public class LoginAppTest {
             assertTrue(e.getMessage().contains("Access denied"));
         }
     }
+    @Test
+    public void testInvalidPassword() throws Exception {
+        LoginApp loginApp = new LoginApp();
+        Method method = LoginApp.class.getDeclaredMethod("authenticateUser", String.class, String.class);
+        method.setAccessible(true);
+
+        String userName = (String) method.invoke(loginApp, "johndoe@example.com", "wrongpassword");
+        assertNull("Authentication should fail for incorrect password.", userName);
+    }
+
+
+    @Test
+    public void testEmptyPassword() throws Exception {
+        LoginApp loginApp = new LoginApp();
+        Method method = LoginApp.class.getDeclaredMethod("authenticateUser", String.class, String.class);
+        method.setAccessible(true);
+
+        String userName = (String) method.invoke(loginApp, "johndoe@example.com", "");
+        assertNull("Authentication should fail for an empty password input.", userName);
+    }
 }
