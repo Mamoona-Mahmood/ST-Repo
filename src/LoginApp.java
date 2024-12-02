@@ -50,28 +50,30 @@ public class LoginApp extends JFrame {
         add(panel);
     }
 
-    //Hello world
+
     private class LoginAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             String email = emailField.getText();
-            String password = new String(passwordField.getPassword()); // Password is ignored for validation
+            String password = new String(passwordField.getPassword()); // Retrieve password entered by user
 
-            String userName = authenticateUser(email);
+            String userName = authenticateUser(email, password); // Pass both email and password for validation
             if (userName != null) {
                 JOptionPane.showMessageDialog(null, "Welcome, " + userName + "!", "Login Successful", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(null, "User not found.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Invalid email or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    String authenticateUser(String email) {
+    private String authenticateUser(String email, String password) {
         String userName = null;
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String query = "SELECT name FROM User WHERE Email = ?";
+            // Update SQL query to include password check
+            String query = "SELECT name FROM User WHERE Email = ? AND Password = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, email);
+            stmt.setString(1, email);    // Set the email parameter
+            stmt.setString(2, password); // Set the password parameter
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -84,6 +86,8 @@ public class LoginApp extends JFrame {
         }
         return userName;
     }
+
+    //Hello world
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
