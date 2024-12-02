@@ -50,6 +50,7 @@ public class LoginApp extends JFrame {
         add(panel);
     }
 
+    //hello world
     private class LoginAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -65,6 +66,7 @@ public class LoginApp extends JFrame {
         }
     }
 
+    //hello world
     String authenticateUser(String email) {
         String userName = null;
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
